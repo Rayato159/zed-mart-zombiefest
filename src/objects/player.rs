@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use super::item::Item;
+use bevy::prelude::*;
 
 const FPS: f32 = 10.;
 
@@ -220,20 +220,18 @@ pub fn is_player_moving(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
     }
 }
 
-pub fn character_confine(
-    mut query: Query<&mut Transform>,
-) {
+pub fn character_confine(mut query: Query<&mut Transform>) {
     for mut transform in query.iter_mut() {
         if transform.translation.x < -320. + 16. {
             transform.translation.x = -320. + 16.;
         }
-        if transform.translation.x > 320. - 16.{
+        if transform.translation.x > 320. - 16. {
             transform.translation.x = 320. - 16.;
         }
-        if transform.translation.y < -320. + 32.{
+        if transform.translation.y < -320. + 32. {
             transform.translation.y = -320. + 32.;
         }
-        if transform.translation.y > 320. - 20.{
+        if transform.translation.y > 320. - 20. {
             transform.translation.y = 320. - 20.;
         }
     }
