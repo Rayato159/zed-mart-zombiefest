@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use super::item::Item;
 
 const FPS: f32 = 10.;
 
@@ -9,6 +10,7 @@ pub struct Player {
     pub is_dead: bool,
     pub direction: Direction,
     pub is_moving: bool,
+    pub items: Vec<Item>,
     pub layout: Handle<TextureAtlasLayout>,
     pub animation_indices: AnimationIndices,
 }
@@ -36,7 +38,8 @@ pub fn player_setup(
     asset_server: Res<AssetServer>,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
 ) {
-    let texture = asset_server.load("sprites/characters/me.sprite.png");
+    let asset = asset_server.clone();
+    let texture = asset.load("sprites/characters/me.sprite.png");
 
     let layout = TextureAtlasLayout::from_grid(Vec2::new(64., 64.), 9, 12, None, None);
     let texture_atlas_layout = texture_atlas_layouts.add(layout.clone());
@@ -48,6 +51,7 @@ pub fn player_setup(
             is_dead: false,
             direction: Direction::None,
             is_moving: false,
+            items: vec![],
             layout: texture_atlas_layout.clone(),
             animation_indices: AnimationIndices { first: 0, last: 0 },
         },
@@ -65,39 +69,39 @@ pub fn player_setup(
 }
 
 pub fn character_move(
-    input: Res<ButtonInput<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
     mut query: Query<(&mut Player, &mut Transform)>,
 ) {
     for (mut player, mut transform) in query.iter_mut() {
-        if input.pressed(KeyCode::KeyW) {
+        if keyboard_input.pressed(KeyCode::KeyW) {
             player.direction = Direction::Up;
             player.is_moving = true;
             transform.translation.y += 200. * time.delta_seconds();
         }
 
-        if input.pressed(KeyCode::KeyD) {
+        if keyboard_input.pressed(KeyCode::KeyD) {
             player.direction = Direction::Right;
             player.is_moving = true;
             transform.translation.x += 200. * time.delta_seconds();
         }
 
-        if input.pressed(KeyCode::KeyS) {
+        if keyboard_input.pressed(KeyCode::KeyS) {
             player.direction = Direction::Down;
             player.is_moving = true;
             transform.translation.y += -200. * time.delta_seconds();
         }
 
-        if input.pressed(KeyCode::KeyA) {
+        if keyboard_input.pressed(KeyCode::KeyA) {
             player.direction = Direction::Left;
             player.is_moving = true;
             transform.translation.x += -200. * time.delta_seconds();
         }
 
-        if input.just_released(KeyCode::KeyW)
-            || input.just_released(KeyCode::KeyD)
-            || input.just_released(KeyCode::KeyS)
-            || input.just_released(KeyCode::KeyA)
+        if keyboard_input.just_released(KeyCode::KeyW)
+            || keyboard_input.just_released(KeyCode::KeyD)
+            || keyboard_input.just_released(KeyCode::KeyS)
+            || keyboard_input.just_released(KeyCode::KeyA)
         {
             player.is_moving = false;
         }

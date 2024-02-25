@@ -1,10 +1,10 @@
 use bevy::{app::PluginGroupBuilder, prelude::*};
+use zedmartzombiefest::camera::camera::camera_setup;
+use zedmartzombiefest::map::{map::map_setup, soundtrack::{volume, music}};
 use zedmartzombiefest::objects::player::{
     animate_sprite, character_confine, character_direction, character_move, is_player_moving,
     player_setup,
 };
-use zedmartzombiefest::camera::camera::camera_setup;
-use zedmartzombiefest::map::map::map_setup;
 
 const WINDOW_TITLE: &str = "Zed Mart Zombiefest";
 const WINDOW_RESOLUTION: Vec2 = Vec2::new(640., 640.);
@@ -14,7 +14,7 @@ fn main() {
 
     App::new()
         .add_plugins(default_plugins.build())
-        .add_systems(Startup, (map_setup, camera_setup, player_setup))
+        .add_systems(Startup, (map_setup, music, camera_setup, player_setup))
         .add_systems(
             Update,
             (
@@ -23,9 +23,9 @@ fn main() {
                 is_player_moving,
                 character_confine,
                 animate_sprite,
+                volume,
             ),
         )
-        .add_systems(Update, animate_sprite)
         .run();
 }
 
