@@ -1,5 +1,5 @@
 use bevy::{app::PluginGroupBuilder, prelude::*};
-use zedmartzombiefest::animation::player::{
+use zedmartzombiefest::objects::player::{
     animate_sprite, character_confine, character_direction, character_move, is_player_moving,
     player_setup,
 };
