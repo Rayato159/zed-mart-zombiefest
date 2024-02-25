@@ -36,14 +36,14 @@ pub fn player_setup(
     asset_server: Res<AssetServer>,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
 ) {
-    let texture = asset_server.load("sprites/characters/jane.sprite.png");
+    let texture = asset_server.load("sprites/characters/me.sprite.png");
 
     let layout = TextureAtlasLayout::from_grid(Vec2::new(64., 64.), 9, 12, None, None);
     let texture_atlas_layout = texture_atlas_layouts.add(layout.clone());
 
     commands.spawn((
         Player {
-            username: "Jane".to_string(),
+            username: "Me".to_string(),
             hit_box: Vec2::new(64., 64.),
             is_dead: false,
             direction: Direction::None,
