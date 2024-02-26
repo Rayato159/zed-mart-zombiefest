@@ -5,10 +5,9 @@ use zedmartzombiefest::map::{
     soundtrack::{music, volume},
 };
 use zedmartzombiefest::objects::{
-    item::item_setup,
+    item::{collect_item, item_setup},
     player::{
-        animate_sprite, player_confine, player_direction, player_move, player_stop,
-        player_setup,
+        animate_sprite, player_confine, player_direction, player_move, player_setup, player_stop,
     },
 };
 
@@ -22,17 +21,18 @@ fn main() {
         .add_plugins(default_plugins.build())
         .add_systems(
             Startup,
-            (map_setup, item_setup, music, camera_setup, player_setup),
+            (map_setup, camera_setup, music, item_setup, player_setup),
         )
         .add_systems(
             Update,
             (
+                volume,
                 player_move,
                 player_direction,
                 player_stop,
                 player_confine,
+                collect_item,
                 animate_sprite,
-                volume,
             ),
         )
         .run();

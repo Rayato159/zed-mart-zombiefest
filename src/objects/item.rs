@@ -1,37 +1,57 @@
+use std::collections::HashMap;
+
 use bevy::prelude::*;
 use rand::prelude::*;
+
+use super::player::Player;
 
 #[derive(Component, Debug, Clone)]
 pub struct Item {
     pub name: String,
     pub texture: Handle<Image>,
+    pub position: Vec3,
 }
 
-pub fn item_setup(mut commands: Commands, query: Query<&Window>, asset_server: Res<AssetServer>) {
-    for window in query.iter() {
+#[derive(Component, Debug, Clone)]
+pub struct ItemEntity {
+    pub entity_map: HashMap<String, Entity>,
+}
+
+pub fn item_setup(
+    mut commands: Commands,
+    window_query: Query<&Window>,
+    asset_server: Res<AssetServer>,
+) {
+    let mut item_entity_map = HashMap::new();
+
+    for window in window_query.iter() {
         let items = vec![
             Item {
                 name: "Water".to_string(),
                 texture: asset_server.clone().load("sprites/items/37.png"),
+                position: Vec3::new(0., 0., 0.),
             },
             Item {
                 name: "Milk".to_string(),
                 texture: asset_server.clone().load("sprites/items/41.png"),
+                position: Vec3::new(0., 0., 0.),
             },
             Item {
                 name: "Burger".to_string(),
                 texture: asset_server.clone().load("sprites/items/0.png"),
+                position: Vec3::new(0., 0., 0.),
             },
             Item {
                 name: "Cabbage".to_string(),
                 texture: asset_server.clone().load("sprites/items/63.png"),
+                position: Vec3::new(0., 0., 0.),
             },
         ];
 
         let window_width = window.width() / 2.;
         let window_height = window.height() / 2.;
 
-        for item in items {
+        for mut item in items {
             let (mut rand_x, mut rand_y) = rand_item_position(window_width, window_height);
 
             while (rand_x == 0. && rand_y == 0.)
@@ -43,23 +63,61 @@ pub fn item_setup(mut commands: Commands, query: Query<&Window>, asset_server: R
                 (rand_x, rand_y) = rand_item_position(window_width, window_height);
             }
 
-            commands.spawn((
-                item.clone(),
-                SpriteSheetBundle {
-                    texture: item.clone().texture,
-                    transform: Transform {
-                        translation: Vec3::new(rand_x, rand_y, -10.),
-                        scale: Vec3::splat(1.2),
+            let new_position = Vec3::new(rand_x, rand_y, -10.);
+
+            item.position = new_position.clone();
+
+            let item_entity = commands
+                .spawn((
+                    item.clone(),
+                    SpriteSheetBundle {
+                        texture: item.clone().texture,
+                        transform: Transform {
+                            translation: new_position.clone(),
+                            scale: Vec3::splat(1.2),
+                            ..default()
+                        },
                         ..default()
                     },
-                    ..default()
-                },
-            ));
+                ))
+                .id();
+
+            item_entity_map.insert(item.name.clone(), item_entity);
+
+            commands.spawn(ItemEntity {
+                entity_map: item_entity_map.clone(),
+            });
         }
     }
 }
 
-pub fn rand_item_position(window_width: f32, window_height: f32) -> (f32, f32) {
+pub fn collect_item(
+    mut commands: Commands,
+    mut player_query: Query<&mut Player>,
+    item_query: Query<&Item>,
+    item_entity_query: Query<&ItemEntity>,
+) {
+    for mut player in player_query.iter_mut() {
+        for item in item_query.iter() {
+            if (player.postion.x - item.position.x).abs() < 16.
+                && (player.postion.y - item.position.y).abs() < 32.
+            {
+                player.items.push(item.clone());
+
+                for item_entity in item_entity_query.iter() {
+                    match item_entity.entity_map.get(&item.name) {
+                        Some(item_entity) => {
+                            commands.entity(*item_entity).despawn();
+                        }
+                        None => {}
+                    }
+                }
+            }
+        }
+    }
+}
+
+fn rand_item_position(window_width: f32, window_height: f32) -> (f32, f32) {
     let mut rng = rand::thread_rng();
 
     let mut nums: Vec<f32> = vec![-1., 1.];
