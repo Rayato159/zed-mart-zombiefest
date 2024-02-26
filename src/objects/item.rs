@@ -51,6 +51,42 @@ pub fn item_setup(
                 texture: asset_server.clone().load("sprites/items/63.png"),
                 position: Vec3::new(0., 0., 0.),
             },
+            Item {
+                id: "85".to_string(),
+                name: "French Fries".to_string(),
+                texture: asset_server.clone().load("sprites/items/85.png"),
+                position: Vec3::new(0., 0., 0.),
+            },
+            Item {
+                id: "34".to_string(),
+                name: "Shushi".to_string(),
+                texture: asset_server.clone().load("sprites/items/34.png"),
+                position: Vec3::new(0., 0., 0.),
+            },
+            Item {
+                id: "48".to_string(),
+                name: "Ice-Cream".to_string(),
+                texture: asset_server.clone().load("sprites/items/48.png"),
+                position: Vec3::new(0., 0., 0.),
+            },
+            Item {
+                id: "15".to_string(),
+                name: "Pork".to_string(),
+                texture: asset_server.clone().load("sprites/items/15.png"),
+                position: Vec3::new(0., 0., 0.),
+            },
+            Item {
+                id: "45".to_string(),
+                name: "Cake".to_string(),
+                texture: asset_server.clone().load("sprites/items/45.png"),
+                position: Vec3::new(0., 0., 0.),
+            },
+            Item {
+                id: "78".to_string(),
+                name: "Corn".to_string(),
+                texture: asset_server.clone().load("sprites/items/78.png"),
+                position: Vec3::new(0., 0., 0.),
+            },
         ];
 
         let window_width = window.width() / 2.;

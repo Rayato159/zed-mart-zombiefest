@@ -46,7 +46,7 @@ pub fn update_goal_text(
 ) {
     for player in player_query.iter() {
         for (_, mut text) in goal_text_query.iter_mut() {
-            text.sections[0].value = format!("Your items: {}/4", player.items.len());
+            text.sections[0].value = format!("Your items: {}/10", player.items.len());
         }
     }
 }
@@ -58,7 +58,7 @@ pub fn is_win(
 ) {
     for mut game in game_query.iter_mut() {
         for player in player_query.iter_mut() {
-            if player.items.len() == 4 {
+            if player.items.len() == 10 {
                 commands.spawn((TextBundle::from_section(
                     "You Win!",
                     TextStyle {
