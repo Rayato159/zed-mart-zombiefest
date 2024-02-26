@@ -48,7 +48,7 @@ pub fn zombie_setup(
             id: "Z002".into(),
             hit_box: Vec3::new(16., 32., 0.),
             direction: Vec3::new(0., 0., 0.),
-            postion: Vec3::new(0., -320., 0.),
+            postion: Vec3::new(-320., -320., 0.),
             layout: texture_atlas_layout.clone(),
             animation_indices: AnimationIndices { first: 0, last: 0 },
         },
