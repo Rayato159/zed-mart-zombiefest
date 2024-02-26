@@ -1,6 +1,6 @@
 use crate::animation::animate::{AnimationIndices, AnimationTimer};
 
-use super::{direction::Direction, item::Item};
+use super::item::Item;
 use bevy::prelude::*;
 
 const FPS: f32 = 10.;
@@ -10,7 +10,7 @@ pub struct Player {
     pub username: String,
     pub hit_box: Vec3,
     pub is_dead: bool,
-    pub direction: Direction,
+    pub direction: Vec3,
     pub is_moving: bool,
     pub items: Vec<Item>,
     pub layout: Handle<TextureAtlasLayout>,
@@ -35,7 +35,7 @@ pub fn player_setup(
             username: "Me".to_string(),
             hit_box: Vec3::new(16., 32., 0.),
             is_dead: false,
-            direction: Direction::None,
+            direction: Vec3::new(0., 0., 0.),
             is_moving: false,
             items: vec![],
             layout: texture_atlas_layout.clone(),
@@ -67,7 +67,7 @@ pub fn player_move(
 ) {
     for (mut player, mut transform) in query.iter_mut() {
         if keyboard_input.pressed(KeyCode::KeyW) {
-            player.direction = Direction::Up;
+            player.direction = Vec3::new(0., 1., 0.);
             player.is_moving = true;
 
             transform.translation.y += 200. * time.delta_seconds();
@@ -75,7 +75,7 @@ pub fn player_move(
         }
 
         if keyboard_input.pressed(KeyCode::KeyD) {
-            player.direction = Direction::Right;
+            player.direction = Vec3::new(1., 0., 0.);
             player.is_moving = true;
 
             transform.translation.x += 200. * time.delta_seconds();
@@ -83,7 +83,7 @@ pub fn player_move(
         }
 
         if keyboard_input.pressed(KeyCode::KeyS) {
-            player.direction = Direction::Down;
+            player.direction = Vec3::new(0., -1., 0.);
             player.is_moving = true;
 
             transform.translation.y += -200. * time.delta_seconds();
@@ -91,7 +91,7 @@ pub fn player_move(
         }
 
         if keyboard_input.pressed(KeyCode::KeyA) {
-            player.direction = Direction::Left;
+            player.direction = Vec3::new(-1., 0., 0.);
             player.is_moving = true;
 
             transform.translation.x += -200. * time.delta_seconds();
@@ -110,112 +110,104 @@ pub fn player_move(
 
 pub fn player_direction(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
     for (mut player, mut atlas) in query.iter_mut() {
-        match player.direction {
-            Direction::Up => {
-                if atlas.index <= 72 || atlas.index >= 80 {
-                    atlas.index = 72;
-                    player.animation_indices = AnimationIndices {
-                        first: 72,
-                        last: 80,
-                    };
-                }
-            }
-            Direction::Right => {
-                if atlas.index <= 99 || atlas.index >= 107 {
-                    atlas.index = 99;
-                    player.animation_indices = AnimationIndices {
-                        first: 99,
-                        last: 107,
-                    };
-                }
-            }
-            Direction::Down => {
-                if atlas.index <= 91 || atlas.index >= 98 {
-                    atlas.index = 91;
-                    player.animation_indices = AnimationIndices {
-                        first: 91,
-                        last: 98,
-                    };
-                }
-            }
-            Direction::Left => {
-                if atlas.index <= 81 || atlas.index >= 89 {
-                    atlas.index = 81;
-                    player.animation_indices = AnimationIndices {
-                        first: 81,
-                        last: 89,
-                    };
-                }
-            }
-            Direction::None => {
-                atlas.index = 19;
+        if player.direction == Vec3::new(0., 1., 0.) {
+            if atlas.index <= 72 || atlas.index >= 80 {
+                atlas.index = 72;
                 player.animation_indices = AnimationIndices {
-                    first: 19,
-                    last: 19,
+                    first: 72,
+                    last: 80,
                 };
             }
+        }
+
+        if player.direction == Vec3::new(1., 0., 0.) {
+            if atlas.index <= 99 || atlas.index >= 107 {
+                atlas.index = 99;
+                player.animation_indices = AnimationIndices {
+                    first: 99,
+                    last: 107,
+                };
+            }
+        }
+
+        if player.direction == Vec3::new(0., -1., 0.) {
+            if atlas.index <= 91 || atlas.index >= 98 {
+                atlas.index = 91;
+                player.animation_indices = AnimationIndices {
+                    first: 91,
+                    last: 98,
+                };
+            }
+        }
+
+        if player.direction == Vec3::new(-1., 0., 0.) {
+            if atlas.index <= 81 || atlas.index >= 89 {
+                atlas.index = 81;
+                player.animation_indices = AnimationIndices {
+                    first: 81,
+                    last: 89,
+                };
+            }
+        }
+
+        if player.direction == Vec3::new(0., 0., 0.) {
+            atlas.index = 19;
+            player.animation_indices = AnimationIndices {
+                first: 19,
+                last: 19,
+            };
         };
     }
 }
 
 pub fn player_stop(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
     for (mut player, mut atlas) in query.iter_mut() {
-        match player.direction {
-            Direction::Up => {
-                if player.animation_indices.first >= 72
-                    && player.animation_indices.first <= 80
-                    && !player.is_moving
-                {
-                    atlas.index = 72;
-                    player.animation_indices = AnimationIndices {
-                        first: 72,
-                        last: 72,
-                    };
-                }
-            }
-            Direction::Right => {
-                if player.animation_indices.first >= 99
-                    && player.animation_indices.first <= 107
-                    && !player.is_moving
-                {
-                    atlas.index = 99;
-                    player.animation_indices = AnimationIndices {
-                        first: 99,
-                        last: 99,
-                    };
-                }
-            }
-            Direction::Down => {
-                if player.animation_indices.first >= 91
-                    && player.animation_indices.first <= 98
-                    && !player.is_moving
-                {
-                    atlas.index = 91;
-                    player.animation_indices = AnimationIndices {
-                        first: 91,
-                        last: 91,
-                    };
-                }
-            }
-            Direction::Left => {
-                if player.animation_indices.first >= 81
-                    && player.animation_indices.first <= 89
-                    && !player.is_moving
-                {
-                    atlas.index = 81;
-                    player.animation_indices = AnimationIndices {
-                        first: 81,
-                        last: 81,
-                    };
-                }
-            }
-            Direction::None => {
-                atlas.index = 19;
+        if player.direction == Vec3::new(0., 1., 0.) {
+            if atlas.index >= 72 && atlas.index <= 80 && !player.is_moving {
+                atlas.index = 72;
                 player.animation_indices = AnimationIndices {
-                    first: 19,
-                    last: 19,
+                    first: 72,
+                    last: 72,
                 };
             }
+        }
+
+        if player.direction == Vec3::new(1., 0., 0.) {
+            if atlas.index >= 99 && atlas.index <= 107 && !player.is_moving {
+                atlas.index = 99;
+                player.animation_indices = AnimationIndices {
+                    first: 99,
+                    last: 99,
+                };
+            }
+        }
+
+        if player.direction == Vec3::new(0., -1., 0.) {
+            if atlas.index >= 91 && atlas.index <= 98 && !player.is_moving {
+                atlas.index = 91;
+                player.animation_indices = AnimationIndices {
+                    first: 91,
+                    last: 91,
+                };
+            }
+        }
+
+        if player.direction == Vec3::new(-1., 0., 0.) {
+            if atlas.index >= 81 && atlas.index <= 89 && !player.is_moving {
+                atlas.index = 81;
+                player.animation_indices = AnimationIndices {
+                    first: 81,
+                    last: 81,
+                };
+            }
+        }
+
+        if player.direction == Vec3::new(0., 0., 0.) {
+            atlas.index = 19;
+            player.animation_indices = AnimationIndices {
+                first: 19,
+                last: 19,
+            };
         };
     }
 }

@@ -11,10 +11,10 @@ const FPS: f32 = 10.;
 pub struct Zombie {
     pub id: String,
     pub hit_box: Vec3,
-    pub direction_vector: Vec3,
+    pub direction: Vec3,
+    pub postion: Vec3,
     pub layout: Handle<TextureAtlasLayout>,
     pub animation_indices: AnimationIndices,
-    pub postion: Vec3,
 }
 
 #[derive(Component, Debug, Clone)]
@@ -38,29 +38,31 @@ pub fn zombie_setup(
     let zombie = Zombie {
         id: "Z001".into(),
         hit_box: Vec3::new(16., 32., 0.),
-        direction_vector: Vec3::new(0., 0., 0.),
+        direction: Vec3::new(0., 0., 0.),
+        postion: Vec3::new(0., 0., 0.),
         layout: texture_atlas_layout.clone(),
         animation_indices: AnimationIndices { first: 0, last: 0 },
-        postion: Vec3::new(0., 0., 0.),
     };
 
-    let zombie_entity = commands.spawn((
-        zombie.clone(),
-        SpriteSheetBundle {
-            texture: texture.clone(),
-            atlas: TextureAtlas {
-                layout: texture_atlas_layout.clone(),
-                index: 19,
-            },
-            transform: Transform {
-                translation: Vec3::new(320., 320., 0.),
-                scale: Vec3::splat(1.0),
+    let zombie_entity = commands
+        .spawn((
+            zombie.clone(),
+            SpriteSheetBundle {
+                texture: texture.clone(),
+                atlas: TextureAtlas {
+                    layout: texture_atlas_layout.clone(),
+                    index: 19,
+                },
+                transform: Transform {
+                    translation: Vec3::new(320., 320., 0.),
+                    scale: Vec3::splat(1.0),
+                    ..default()
+                },
                 ..default()
             },
-            ..default()
-        },
-        AnimationTimer(Timer::from_seconds(1. / FPS, TimerMode::Repeating)),
-    )).id();
+            AnimationTimer(Timer::from_seconds(1. / FPS, TimerMode::Repeating)),
+        ))
+        .id();
 
     zombie_entity_map.insert(zombie.clone().id, zombie_entity);
 
@@ -78,10 +80,56 @@ pub fn zombie_move(
         for (mut zombie, mut transform) in zombie_query.iter_mut() {
             let dif = player.postion - zombie.postion;
             let distance = dif.length();
+            let new_pos = dif.normalize();
 
             if distance > 32. {
-                zombie.direction_vector = transform.translation;
-                transform.translation += 100. * time.delta_seconds();
+                zombie.postion = new_pos;
+                zombie.postion += new_pos * 100. * time.delta_seconds();
+                transform.translation = zombie.postion;
+            }
+        }
+    }
+}
+
+pub fn zombie_animate(mut query: Query<(&mut Zombie, &mut TextureAtlas)>) {
+    for (mut zombie, mut atlas) in query.iter_mut() {
+        if zombie.direction == Vec3::new(0., 1., 0.) {
+            if atlas.index <= 72 || atlas.index >= 80 {
+                atlas.index = 72;
+                zombie.animation_indices = AnimationIndices {
+                    first: 72,
+                    last: 80,
+                };
+            }
+        }
+
+        if zombie.direction == Vec3::new(1., 0., 0.) {
+            if atlas.index <= 99 || atlas.index >= 107 {
+                atlas.index = 99;
+                zombie.animation_indices = AnimationIndices {
+                    first: 99,
+                    last: 107,
+                };
+            }
+        }
+
+        if zombie.direction == Vec3::new(0., -1., 0.) {
+            if atlas.index <= 91 || atlas.index >= 98 {
+                atlas.index = 91;
+                zombie.animation_indices = AnimationIndices {
+                    first: 91,
+                    last: 98,
+                };
+            }
+        }
+
+        if zombie.direction == Vec3::new(-1., 0., 0.) {
+            if atlas.index <= 81 || atlas.index >= 89 {
+                atlas.index = 81;
+                zombie.animation_indices = AnimationIndices {
+                    first: 81,
+                    last: 89,
+                };
             }
         }
     }
