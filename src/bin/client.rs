@@ -22,7 +22,7 @@ fn main() {
         .add_plugins(default_plugins.build())
         .add_systems(
             Startup,
-            (map_setup, music, camera_setup, player_setup, item_setup),
+            (map_setup, item_setup, music, camera_setup, player_setup),
         )
         .add_systems(
             Update,

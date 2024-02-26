@@ -6,6 +6,11 @@ pub fn map_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         SpriteBundle {
             texture: floor_texture.clone(),
+            transform: Transform {
+                translation: Vec3::new(0., 0., -20.),
+                scale: Vec3::splat(1.),
+                ..default()
+            },
             ..default()
         },
         ImageScaleMode::Tiled {
