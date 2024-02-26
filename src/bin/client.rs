@@ -1,14 +1,14 @@
 use bevy::{app::PluginGroupBuilder, prelude::*};
+use zedmartzombiefest::animation::animate::animate_sprite;
 use zedmartzombiefest::camera::camera::camera_setup;
 use zedmartzombiefest::map::{
     map::map_setup,
     soundtrack::{music, volume},
 };
+use zedmartzombiefest::objects::zombie::zombie_setup;
 use zedmartzombiefest::objects::{
     item::{collect_item, item_setup},
-    player::{
-        animate_sprite, player_confine, player_direction, player_move, player_setup, player_stop,
-    },
+    player::{player_confine, player_direction, player_move, player_setup, player_stop},
 };
 
 const WINDOW_TITLE: &str = "Zed Mart Zombiefest";
@@ -21,7 +21,14 @@ fn main() {
         .add_plugins(default_plugins.build())
         .add_systems(
             Startup,
-            (map_setup, camera_setup, music, item_setup, player_setup),
+            (
+                map_setup,
+                camera_setup,
+                music,
+                item_setup,
+                player_setup,
+                zombie_setup,
+            ),
         )
         .add_systems(
             Update,

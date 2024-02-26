@@ -99,8 +99,8 @@ pub fn collect_item(
 ) {
     for mut player in player_query.iter_mut() {
         for item in item_query.iter() {
-            if (player.postion.x - item.position.x).abs() < 16.
-                && (player.postion.y - item.position.y).abs() < 32.
+            if (player.postion.x - item.position.x).abs() < player.hit_box.x
+                && (player.postion.y - item.position.y).abs() < player.hit_box.y
             {
                 player.items.push(item.clone());
 

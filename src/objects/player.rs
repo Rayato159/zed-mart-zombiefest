@@ -1,4 +1,6 @@
-use super::item::Item;
+use crate::animation::animate::{AnimationIndices, AnimationTimer};
+
+use super::{direction::Direction, item::Item};
 use bevy::prelude::*;
 
 const FPS: f32 = 10.;
@@ -16,24 +18,6 @@ pub struct Player {
     pub postion: Vec3,
 }
 
-#[derive(Component, Debug, Clone, PartialEq)]
-pub enum Direction {
-    None,
-    Up,
-    Down,
-    Left,
-    Right,
-}
-
-#[derive(Component, Debug, Clone)]
-pub struct AnimationIndices {
-    first: usize,
-    last: usize,
-}
-
-#[derive(Component, Deref, DerefMut)]
-pub struct AnimationTimer(Timer);
-
 pub fn player_setup(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -48,7 +32,7 @@ pub fn player_setup(
     commands.spawn((
         Player {
             username: "Me".to_string(),
-            hit_box: Vec3::new(64., 64., 0.),
+            hit_box: Vec3::new(16., 32., 0.),
             is_dead: false,
             direction: Direction::None,
             is_moving: false,
@@ -247,22 +231,6 @@ pub fn player_confine(mut query: Query<&mut Transform>) {
         }
         if transform.translation.y > 320. - 20. {
             transform.translation.y = 320. - 20.;
-        }
-    }
-}
-
-pub fn animate_sprite(
-    time: Res<Time>,
-    mut query: Query<(&Player, &mut AnimationTimer, &mut TextureAtlas)>,
-) {
-    for (player, mut timer, mut atlas) in query.iter_mut() {
-        timer.tick(time.delta());
-        if timer.just_finished() {
-            atlas.index = if atlas.index == player.animation_indices.last {
-                player.animation_indices.first
-            } else {
-                atlas.index + 1
-            }
         }
     }
 }
