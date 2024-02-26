@@ -5,7 +5,9 @@ use zedmartzombiefest::map::{
     map::map_setup,
     soundtrack::{music, volume},
 };
-use zedmartzombiefest::objects::game::{exit, is_game_over, is_win, start};
+use zedmartzombiefest::objects::game::{
+    exit, goal_text_setup, is_game_over, is_win, start, update_goal_text,
+};
 use zedmartzombiefest::objects::player::despawn_player;
 use zedmartzombiefest::objects::zombie::{
     despawn_zombie, zombie_animate, zombie_kill, zombie_move, zombie_setup,
@@ -30,6 +32,7 @@ fn main() {
                 camera_setup,
                 music,
                 item_setup,
+                goal_text_setup,
                 player_setup,
                 zombie_setup,
                 start,
@@ -44,6 +47,7 @@ fn main() {
                 player_stop,
                 player_confine,
                 collect_item,
+                update_goal_text,
                 zombie_move,
                 zombie_animate,
                 zombie_kill,
