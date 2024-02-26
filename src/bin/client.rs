@@ -7,7 +7,7 @@ use zedmartzombiefest::map::{
 use zedmartzombiefest::objects::{
     item::item_setup,
     player::{
-        animate_sprite, character_confine, character_direction, character_move, character_stop,
+        animate_sprite, player_confine, player_direction, player_move, player_stop,
         player_setup,
     },
 };
@@ -27,10 +27,10 @@ fn main() {
         .add_systems(
             Update,
             (
-                character_move,
-                character_direction,
-                character_stop,
-                character_confine,
+                player_move,
+                player_direction,
+                player_stop,
+                player_confine,
                 animate_sprite,
                 volume,
             ),

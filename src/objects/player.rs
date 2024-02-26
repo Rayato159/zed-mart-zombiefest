@@ -68,7 +68,7 @@ pub fn player_setup(
     ));
 }
 
-pub fn character_move(
+pub fn player_move(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
     mut query: Query<(&mut Player, &mut Transform)>,
@@ -108,7 +108,7 @@ pub fn character_move(
     }
 }
 
-pub fn character_direction(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
+pub fn player_direction(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
     for (mut player, mut atlas) in query.iter_mut() {
         match player.direction {
             Direction::Up => {
@@ -158,7 +158,7 @@ pub fn character_direction(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
     }
 }
 
-pub fn character_stop(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
+pub fn player_stop(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
     for (mut player, mut atlas) in query.iter_mut() {
         match player.direction {
             Direction::Up => {
@@ -220,7 +220,7 @@ pub fn character_stop(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
     }
 }
 
-pub fn character_confine(mut query: Query<&mut Transform>) {
+pub fn player_confine(mut query: Query<&mut Transform>) {
     for mut transform in query.iter_mut() {
         if transform.translation.x < -320. + 16. {
             transform.translation.x = -320. + 16.;
