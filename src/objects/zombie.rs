@@ -35,40 +35,52 @@ pub fn zombie_setup(
 
     let mut zombie_entity_map = HashMap::new();
 
-    let zombie = Zombie {
-        id: "Z001".into(),
-        hit_box: Vec3::new(16., 32., 0.),
-        direction: Vec3::new(0., 0., 0.),
-        postion: Vec3::new(320., 320., 0.),
-        layout: texture_atlas_layout.clone(),
-        animation_indices: AnimationIndices { first: 0, last: 0 },
-    };
+    let zombies = vec![
+        Zombie {
+            id: "Z001".into(),
+            hit_box: Vec3::new(16., 32., 0.),
+            direction: Vec3::new(0., 0., 0.),
+            postion: Vec3::new(320., 320., 0.),
+            layout: texture_atlas_layout.clone(),
+            animation_indices: AnimationIndices { first: 0, last: 0 },
+        },
+        Zombie {
+            id: "Z002".into(),
+            hit_box: Vec3::new(16., 32., 0.),
+            direction: Vec3::new(0., 0., 0.),
+            postion: Vec3::new(0., -320., 0.),
+            layout: texture_atlas_layout.clone(),
+            animation_indices: AnimationIndices { first: 0, last: 0 },
+        },
+    ];
 
-    let zombie_entity = commands
-        .spawn((
-            zombie.clone(),
-            SpriteSheetBundle {
-                texture: texture.clone(),
-                atlas: TextureAtlas {
-                    layout: texture_atlas_layout.clone(),
-                    index: 91,
-                },
-                transform: Transform {
-                    translation: Vec3::new(320., 320., 0.),
-                    scale: Vec3::splat(1.0),
+    for zombie in zombies.iter() {
+        let zombie_entity = commands
+            .spawn((
+                zombie.clone(),
+                SpriteSheetBundle {
+                    texture: texture.clone(),
+                    atlas: TextureAtlas {
+                        layout: texture_atlas_layout.clone(),
+                        index: 91,
+                    },
+                    transform: Transform {
+                        translation: zombie.clone().postion,
+                        scale: Vec3::splat(1.0),
+                        ..default()
+                    },
                     ..default()
                 },
-                ..default()
-            },
-            AnimationTimer(Timer::from_seconds(1. / FPS, TimerMode::Repeating)),
-        ))
-        .id();
+                AnimationTimer(Timer::from_seconds(1. / FPS, TimerMode::Repeating)),
+            ))
+            .id();
 
-    zombie_entity_map.insert(zombie.clone().id, zombie_entity);
+        zombie_entity_map.insert(zombie.clone().id, zombie_entity);
 
-    commands.spawn(ZombieEntity {
-        entity_map: zombie_entity_map.clone(),
-    });
+        commands.spawn(ZombieEntity {
+            entity_map: zombie_entity_map.clone(),
+        });
+    }
 }
 
 pub fn zombie_move(
