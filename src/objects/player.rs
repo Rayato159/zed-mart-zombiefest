@@ -16,6 +16,7 @@ pub struct Player {
     pub layout: Handle<TextureAtlasLayout>,
     pub animation_indices: AnimationIndices,
     pub postion: Vec3,
+    pub is_win: bool,
 }
 
 pub fn player_setup(
@@ -40,6 +41,7 @@ pub fn player_setup(
             layout: texture_atlas_layout.clone(),
             animation_indices: AnimationIndices { first: 0, last: 0 },
             postion: Vec3::new(0., 0., 0.),
+            is_win: false,
         },
         SpriteSheetBundle {
             texture: texture.clone(),
@@ -235,11 +237,8 @@ pub fn player_confine(mut query: Query<&mut Transform>) {
     }
 }
 
-pub fn is_player_win(
-    mut commands: Commands,
-    player_query: Query<&Player>,
-) {
-    for player in player_query.iter() {
+pub fn is_player_win(mut commands: Commands, mut player_query: Query<&mut Player>) {
+    for mut player in player_query.iter_mut() {
         if player.items.len() == 4 {
             commands.spawn((TextBundle::from_section(
                 "You Win!",
@@ -257,6 +256,8 @@ pub fn is_player_win(
                 align_items: AlignItems::Center,
                 ..default()
             }),));
+
+            player.is_win = true;
         }
     }
 }
