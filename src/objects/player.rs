@@ -234,3 +234,29 @@ pub fn player_confine(mut query: Query<&mut Transform>) {
         }
     }
 }
+
+pub fn is_player_win(
+    mut commands: Commands,
+    player_query: Query<&Player>,
+) {
+    for player in player_query.iter() {
+        if player.items.len() == 4 {
+            commands.spawn((TextBundle::from_section(
+                "You Win!",
+                TextStyle {
+                    font_size: 100.0,
+                    color: Color::WHITE,
+                    ..default()
+                },
+            )
+            .with_style(Style {
+                position_type: PositionType::Absolute,
+                top: Val::Px(270.),
+                left: Val::Px(130.),
+                justify_content: JustifyContent::Center,
+                align_items: AlignItems::Center,
+                ..default()
+            }),));
+        }
+    }
+}

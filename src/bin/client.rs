@@ -5,6 +5,7 @@ use zedmartzombiefest::map::{
     map::map_setup,
     soundtrack::{music, volume},
 };
+use zedmartzombiefest::objects::player::is_player_win;
 use zedmartzombiefest::objects::zombie::zombie_setup;
 use zedmartzombiefest::objects::{
     item::{collect_item, item_setup},
@@ -40,6 +41,7 @@ fn main() {
                 player_confine,
                 collect_item,
                 animate_sprite,
+                is_player_win,
             ),
         )
         .run();
