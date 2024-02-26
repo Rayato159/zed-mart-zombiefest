@@ -4,6 +4,8 @@
 ## About This Game
 ![alt text](./screenshots/screenshotv2.png "ScreenShot")
 
+[Demo Gameplay Video](https://www.youtube.com/watch?v=Pv-VP99ITcY)
+
 This game is just a stupid 2D game that made by Rust Bevy from scratch.
 
 The goal of this game is just to collect all items in the supermarket before facing the threat of ZEDDD!!!
@@ -33,7 +35,7 @@ At first, we find the distance between the player and the zombie, normalize the 
 
 ![alt text](./screenshots/direction1.png "Direction1")
 
-![alt text](./screenshots/direction2.png "Direction1")
+![alt text](./screenshots/direction2.png "Direction2")
 
 ## Tech Stack
 - [Rust Bevy](https://bevyengine.org/)
