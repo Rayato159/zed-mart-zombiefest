@@ -7,6 +7,7 @@ use super::player::Player;
 
 #[derive(Component, Debug, Clone)]
 pub struct Item {
+    pub id: String,
     pub name: String,
     pub texture: Handle<Image>,
     pub position: Vec3,
@@ -27,21 +28,25 @@ pub fn item_setup(
     for window in window_query.iter() {
         let items = vec![
             Item {
+                id: "37".to_string(),
                 name: "Water".to_string(),
                 texture: asset_server.clone().load("sprites/items/37.png"),
                 position: Vec3::new(0., 0., 0.),
             },
             Item {
+                id: "41".to_string(),
                 name: "Milk".to_string(),
                 texture: asset_server.clone().load("sprites/items/41.png"),
                 position: Vec3::new(0., 0., 0.),
             },
             Item {
+                id: "0".to_string(),
                 name: "Burger".to_string(),
                 texture: asset_server.clone().load("sprites/items/0.png"),
                 position: Vec3::new(0., 0., 0.),
             },
             Item {
+                id: "63".to_string(),
                 name: "Cabbage".to_string(),
                 texture: asset_server.clone().load("sprites/items/63.png"),
                 position: Vec3::new(0., 0., 0.),
@@ -82,7 +87,7 @@ pub fn item_setup(
                 ))
                 .id();
 
-            item_entity_map.insert(item.name.clone(), item_entity);
+            item_entity_map.insert(item.id.clone(), item_entity);
 
             commands.spawn(ItemEntity {
                 entity_map: item_entity_map.clone(),
@@ -105,7 +110,7 @@ pub fn collect_item(
                 player.items.push(item.clone());
 
                 for item_entity in item_entity_query.iter() {
-                    match item_entity.entity_map.get(&item.name) {
+                    match item_entity.entity_map.get(&item.id) {
                         Some(item_entity) => {
                             commands.entity(*item_entity).despawn();
                         }

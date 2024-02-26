@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use super::player::Player;
 
-#[derive(Component, PartialEq)]
+#[derive(Component, Debug, PartialEq)]
 pub enum GameState {
     Start,
     Win,
@@ -63,7 +63,7 @@ pub fn is_game_over(
                 .with_style(Style {
                     position_type: PositionType::Absolute,
                     top: Val::Px(270.),
-                    left: Val::Px(130.),
+                    left: Val::Px(110.),
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
                     ..default()

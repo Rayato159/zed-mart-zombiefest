@@ -1,12 +1,15 @@
+use std::collections::HashMap;
+
 use crate::animation::animate::{AnimationIndices, AnimationTimer};
 
-use super::item::Item;
+use super::{game::GameState, item::Item};
 use bevy::prelude::*;
 
 const FPS: f32 = 10.;
 
-#[derive(Component)]
+#[derive(Component, Clone)]
 pub struct Player {
+    pub id: String,
     pub username: String,
     pub hit_box: Vec3,
     pub is_dead: bool,
@@ -16,6 +19,11 @@ pub struct Player {
     pub layout: Handle<TextureAtlasLayout>,
     pub animation_indices: AnimationIndices,
     pub postion: Vec3,
+}
+
+#[derive(Component, Debug, Clone)]
+pub struct PlayerEntity {
+    pub entity_map: HashMap<String, Entity>,
 }
 
 pub fn player_setup(
@@ -29,33 +37,46 @@ pub fn player_setup(
     let layout = TextureAtlasLayout::from_grid(Vec2::new(64., 64.), 9, 12, None, None);
     let texture_atlas_layout = texture_atlas_layouts.add(layout.clone());
 
-    commands.spawn((
-        Player {
-            username: "Me".to_string(),
-            hit_box: Vec3::new(32., 32., 0.),
-            is_dead: false,
-            direction: Vec3::new(0., 0., 0.),
-            is_moving: false,
-            items: vec![],
-            layout: texture_atlas_layout.clone(),
-            animation_indices: AnimationIndices { first: 0, last: 0 },
-            postion: Vec3::new(0., 0., 0.),
-        },
-        SpriteSheetBundle {
-            texture: texture.clone(),
-            atlas: TextureAtlas {
-                layout: texture_atlas_layout.clone(),
-                index: 19,
-            },
-            transform: Transform {
-                translation: Vec3::new(0., 0., 0.),
-                scale: Vec3::splat(1.0),
+    let mut player_entity_map = HashMap::new();
+
+    let player = Player {
+        id: "P001".into(),
+        username: "Me".to_string(),
+        hit_box: Vec3::new(32., 32., 0.),
+        is_dead: false,
+        direction: Vec3::new(0., 0., 0.),
+        is_moving: false,
+        items: vec![],
+        layout: texture_atlas_layout.clone(),
+        animation_indices: AnimationIndices { first: 0, last: 0 },
+        postion: Vec3::new(0., 0., 0.),
+    };
+
+    let player_entity = commands
+        .spawn((
+            player.clone(),
+            SpriteSheetBundle {
+                texture: texture.clone(),
+                atlas: TextureAtlas {
+                    layout: texture_atlas_layout.clone(),
+                    index: 19,
+                },
+                transform: Transform {
+                    translation: Vec3::new(0., 0., 0.),
+                    scale: Vec3::splat(1.0),
+                    ..default()
+                },
                 ..default()
             },
-            ..default()
-        },
-        AnimationTimer(Timer::from_seconds(1. / FPS, TimerMode::Repeating)),
-    ));
+            AnimationTimer(Timer::from_seconds(1. / FPS, TimerMode::Repeating)),
+        ))
+        .id();
+
+    player_entity_map.insert(player.clone().id, player_entity);
+
+    commands.spawn(PlayerEntity {
+        entity_map: player_entity_map.clone(),
+    });
 }
 
 pub fn player_move(
@@ -223,6 +244,41 @@ pub fn player_confine(mut query: Query<&mut Transform>) {
         }
         if transform.translation.y > 320. - 20. {
             transform.translation.y = 320. - 20.;
+        }
+    }
+}
+
+pub fn despawn_player(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    game_query: Query<&GameState>,
+    player_query: Query<&Player>,
+    player_entity_query: Query<&PlayerEntity>,
+) {
+    for game in game_query.iter() {
+        if *game == GameState::GameOver {
+            for player in player_query.iter() {
+                for player_entity in player_entity_query.iter() {
+                    match player_entity.entity_map.get(&player.id) {
+                        Some(player_entity) => {
+                            let asset = asset_server.clone();
+                            let sound_effect = asset.load("audios/dead.ogg");
+
+                            commands.spawn((AudioBundle {
+                                source: sound_effect.clone(),
+                                settings: PlaybackSettings {
+                                    mode: bevy::audio::PlaybackMode::Despawn,
+                                    ..default()
+                                },
+                                ..default()
+                            },));
+
+                            commands.entity(*player_entity).despawn();
+                        }
+                        None => {}
+                    }
+                }
+            }
         }
     }
 }
