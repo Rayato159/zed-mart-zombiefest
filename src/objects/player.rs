@@ -16,7 +16,6 @@ pub struct Player {
     pub layout: Handle<TextureAtlasLayout>,
     pub animation_indices: AnimationIndices,
     pub postion: Vec3,
-    pub is_win: bool,
 }
 
 pub fn player_setup(
@@ -33,7 +32,7 @@ pub fn player_setup(
     commands.spawn((
         Player {
             username: "Me".to_string(),
-            hit_box: Vec3::new(16., 32., 0.),
+            hit_box: Vec3::new(32., 32., 0.),
             is_dead: false,
             direction: Vec3::new(0., 0., 0.),
             is_moving: false,
@@ -41,7 +40,6 @@ pub fn player_setup(
             layout: texture_atlas_layout.clone(),
             animation_indices: AnimationIndices { first: 0, last: 0 },
             postion: Vec3::new(0., 0., 0.),
-            is_win: false,
         },
         SpriteSheetBundle {
             texture: texture.clone(),
@@ -225,31 +223,6 @@ pub fn player_confine(mut query: Query<&mut Transform>) {
         }
         if transform.translation.y > 320. - 20. {
             transform.translation.y = 320. - 20.;
-        }
-    }
-}
-
-pub fn is_player_win(mut commands: Commands, mut player_query: Query<&mut Player>) {
-    for mut player in player_query.iter_mut() {
-        if player.items.len() == 4 {
-            commands.spawn((TextBundle::from_section(
-                "You Win!",
-                TextStyle {
-                    font_size: 100.0,
-                    color: Color::WHITE,
-                    ..default()
-                },
-            )
-            .with_style(Style {
-                position_type: PositionType::Absolute,
-                top: Val::Px(270.),
-                left: Val::Px(130.),
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
-                ..default()
-            }),));
-
-            player.is_win = true;
         }
     }
 }

@@ -1,12 +1,14 @@
 use bevy::{app::PluginGroupBuilder, prelude::*};
-use zedmartzombiefest::animation::animate::animate_sprite;
+use zedmartzombiefest::animation::animate::{animate_player_sprite, animate_zombie_sprite};
 use zedmartzombiefest::camera::camera::camera_setup;
 use zedmartzombiefest::map::{
     map::map_setup,
     soundtrack::{music, volume},
 };
-use zedmartzombiefest::objects::player::is_player_win;
-use zedmartzombiefest::objects::zombie::{despawn_zombie, zombie_move, zombie_setup};
+use zedmartzombiefest::objects::game::{is_game_over, is_win, start};
+use zedmartzombiefest::objects::zombie::{
+    despawn_zombie, zombie_animate, zombie_kill, zombie_move, zombie_setup
+};
 use zedmartzombiefest::objects::{
     item::{collect_item, item_setup},
     player::{player_confine, player_direction, player_move, player_setup, player_stop},
@@ -29,6 +31,7 @@ fn main() {
                 item_setup,
                 player_setup,
                 zombie_setup,
+                start,
             ),
         )
         .add_systems(
@@ -41,8 +44,12 @@ fn main() {
                 player_confine,
                 collect_item,
                 zombie_move,
-                animate_sprite,
-                is_player_win,
+                zombie_animate,
+                zombie_kill,
+                animate_player_sprite,
+                animate_zombie_sprite,
+                is_win,
+                is_game_over,
                 despawn_zombie,
             ),
         )

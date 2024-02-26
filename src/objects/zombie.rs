@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::animation::animate::{AnimationIndices, AnimationTimer};
 
-use super::player::Player;
+use super::{game::GameState, player::Player};
 use bevy::prelude::*;
 
 const FPS: f32 = 10.;
@@ -39,7 +39,7 @@ pub fn zombie_setup(
         id: "Z001".into(),
         hit_box: Vec3::new(16., 32., 0.),
         direction: Vec3::new(0., 0., 0.),
-        postion: Vec3::new(0., 0., 0.),
+        postion: Vec3::new(320., 320., 0.),
         layout: texture_atlas_layout.clone(),
         animation_indices: AnimationIndices { first: 0, last: 0 },
     };
@@ -51,7 +51,7 @@ pub fn zombie_setup(
                 texture: texture.clone(),
                 atlas: TextureAtlas {
                     layout: texture_atlas_layout.clone(),
-                    index: 19,
+                    index: 91,
                 },
                 transform: Transform {
                     translation: Vec3::new(320., 320., 0.),
@@ -83,9 +83,10 @@ pub fn zombie_move(
             let new_pos = dif.normalize();
 
             if distance > 32. {
-                zombie.postion = new_pos;
-                zombie.postion += new_pos * 100. * time.delta_seconds();
-                transform.translation = zombie.postion;
+                transform.translation += new_pos * 100. * time.delta_seconds();
+                zombie.postion = transform.translation;
+
+                zombie.direction = player.direction;
             }
         }
     }
@@ -93,6 +94,14 @@ pub fn zombie_move(
 
 pub fn zombie_animate(mut query: Query<(&mut Zombie, &mut TextureAtlas)>) {
     for (mut zombie, mut atlas) in query.iter_mut() {
+        if zombie.direction == Vec3::new(0., 0., 0.) {
+            atlas.index = 91;
+            zombie.animation_indices = AnimationIndices {
+                first: 91,
+                last: 91,
+            };
+        }
+
         if zombie.direction == Vec3::new(0., 1., 0.) {
             if atlas.index <= 72 || atlas.index >= 80 {
                 atlas.index = 72;
@@ -152,14 +161,26 @@ pub fn zombie_confine(mut query: Query<&mut Transform>) {
     }
 }
 
+pub fn zombie_kill(zombie_query: Query<&Zombie>, mut player_query: Query<&mut Player>) {
+    for zombie in zombie_query.iter() {
+        for mut player in player_query.iter_mut() {
+            if (player.postion.x - zombie.postion.x).abs() < player.hit_box.x
+                && (player.postion.y - zombie.postion.y).abs() < player.hit_box.y
+            {
+                player.is_dead = true;
+            }
+        }
+    }
+}
+
 pub fn despawn_zombie(
     mut commands: Commands,
-    player_query: Query<&Player>,
+    game_query: Query<&GameState>,
     zombie_query: Query<&Zombie>,
     zombie_entity_query: Query<&ZombieEntity>,
 ) {
-    for player in player_query.iter() {
-        if player.is_win {
+    for game in game_query.iter() {
+        if *game == GameState::Win {
             for zombie in zombie_query.iter() {
                 for zombie_entity in zombie_entity_query.iter() {
                     match zombie_entity.entity_map.get(&zombie.id) {
