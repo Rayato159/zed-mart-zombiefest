@@ -5,11 +5,11 @@ use zedmartzombiefest::map::{
     soundtrack::{music, volume},
 };
 use zedmartzombiefest::objects::{
+    item::item_setup,
     player::{
-        animate_sprite, character_confine, character_direction, character_move, is_player_moving,
+        animate_sprite, character_confine, character_direction, character_move, character_stop,
         player_setup,
     },
-    item::item_setup,
 };
 
 const WINDOW_TITLE: &str = "Zed Mart Zombiefest";
@@ -20,13 +20,16 @@ fn main() {
 
     App::new()
         .add_plugins(default_plugins.build())
-        .add_systems(Startup, (map_setup, music, camera_setup, player_setup, item_setup))
+        .add_systems(
+            Startup,
+            (map_setup, music, camera_setup, player_setup, item_setup),
+        )
         .add_systems(
             Update,
             (
                 character_move,
                 character_direction,
-                is_player_moving,
+                character_stop,
                 character_confine,
                 animate_sprite,
                 volume,

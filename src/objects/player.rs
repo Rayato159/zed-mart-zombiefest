@@ -15,7 +15,7 @@ pub struct Player {
     pub animation_indices: AnimationIndices,
 }
 
-#[derive(Component, Debug, Clone)]
+#[derive(Component, Debug, Clone, PartialEq)]
 pub enum Direction {
     None,
     Up,
@@ -112,7 +112,7 @@ pub fn character_direction(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
     for (mut player, mut atlas) in query.iter_mut() {
         match player.direction {
             Direction::Up => {
-                if player.animation_indices.first != 72 {
+                if atlas.index <= 72 || atlas.index >= 80 {
                     atlas.index = 72;
                     player.animation_indices = AnimationIndices {
                         first: 72,
@@ -121,7 +121,7 @@ pub fn character_direction(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
                 }
             }
             Direction::Right => {
-                if player.animation_indices.first != 99 {
+                if atlas.index <= 99 || atlas.index >= 107 {
                     atlas.index = 99;
                     player.animation_indices = AnimationIndices {
                         first: 99,
@@ -130,7 +130,7 @@ pub fn character_direction(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
                 }
             }
             Direction::Down => {
-                if player.animation_indices.first != 91 {
+                if atlas.index <= 91 || atlas.index >= 98 {
                     atlas.index = 91;
                     player.animation_indices = AnimationIndices {
                         first: 91,
@@ -139,7 +139,7 @@ pub fn character_direction(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
                 }
             }
             Direction::Left => {
-                if player.animation_indices.first != 81 {
+                if atlas.index <= 81 || atlas.index >= 89 {
                     atlas.index = 81;
                     player.animation_indices = AnimationIndices {
                         first: 81,
@@ -158,7 +158,7 @@ pub fn character_direction(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
     }
 }
 
-pub fn is_player_moving(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
+pub fn character_stop(mut query: Query<(&mut Player, &mut TextureAtlas)>) {
     for (mut player, mut atlas) in query.iter_mut() {
         match player.direction {
             Direction::Up => {

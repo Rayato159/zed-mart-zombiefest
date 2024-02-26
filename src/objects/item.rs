@@ -1,8 +1,5 @@
-use std::time::{SystemTime, UNIX_EPOCH};
-
 use bevy::prelude::*;
 use rand::prelude::*;
-use rand_distr::{Distribution, Normal};
 
 #[derive(Component, Debug, Clone)]
 pub struct Item {
