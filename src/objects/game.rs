@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{input::keyboard, prelude::*};
 
 use super::player::Player;
 
@@ -72,5 +72,14 @@ pub fn is_game_over(
                 *game = GameState::GameOver;
             }
         }
+    }
+}
+
+pub fn exit(
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut app_exit_events: ResMut<Events<bevy::app::AppExit>>
+) {
+    if keyboard_input.pressed(KeyCode::Escape) {
+        app_exit_events.send(bevy::app::AppExit);
     }
 }
