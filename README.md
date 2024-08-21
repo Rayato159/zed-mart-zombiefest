@@ -4,7 +4,7 @@
 ## About This Game
 ![alt text](./screenshots/screenshotv2.png "ScreenShot")
 
-[Demo Gameplay Video](https://www.youtube.com/watch?v=Pv-VP99ITcY)
+[Click to play on the browser!](https://rayato159.github.io/zed-mart-zombiefest-wasm/)
 
 This game is just a stupid 2D game that made by Rust Bevy from scratch.
 
